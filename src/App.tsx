@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import './App.css'
-import TaskCard from './components/TaskCard'
 import { TaskList, Task } from './model/task';
 import { produce } from "immer";
 import { buildTaskTree } from './model/viewModel/taskTree';
