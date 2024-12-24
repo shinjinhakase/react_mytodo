@@ -1,70 +1,62 @@
 import React, { useState } from 'react'
 import './App.css'
-import TaskCard from './component/task'
-import { Board, Task } from './model/task';
+import TaskCard from './components/TaskCard'
+import { TaskList, Task } from './model/simpleTask';
 import { produce } from "immer";
+import { buildTaskTree } from './model/viewModel/taskTree';
+import { AddChildrenContext, RemoveTaskContext, ChangeTaskContext } from './contexts/TaskCardContext';
+import { TaskTree } from './components/TaskTree';
 
 function App() {
-  const defaultBoard: Board = {
-    uuid: crypto.randomUUID(),
-    title: "TestBoard",
-    taskLists: [
-      {
-        title: "TaskList",
-        uuid: crypto.randomUUID(),
-        elements: [
-          { uuid: crypto.randomUUID(), title: "task1", label: "A", priority: 1, children: [] },
-          { uuid: crypto.randomUUID(), title: "task2", label: "B", priority: 2, children: [] }
-        ]
-      }
+  const first_task_id = crypto.randomUUID()
+  const defaultList: TaskList = {
+    id: crypto.randomUUID(),
+    title: "TestList",
+    tasks: [
+      { id: first_task_id, title: "task1", label: "A", priority: 1, parentId: null },
+      { id: crypto.randomUUID(), title: "task2", label: "B", priority: 2, parentId: null },
+      { id: crypto.randomUUID(), title: "task3", label: "C", priority: 3, parentId: first_task_id }
     ]
   }
-  const [board, setBoard] = useState(defaultBoard)
+  const [tasklist, setTaskList] = useState(defaultList)
   function handleAddTask(_: React.MouseEvent) {
-    setBoard(
+    setTaskList(
       produce((draft) => {
-        draft.taskLists[0].elements.push(
-          { uuid: crypto.randomUUID(), title: "newTask", label: "C", priority: 3, children: [] }
+        draft.tasks.push(
+          { id: crypto.randomUUID(), title: "newTask", label: "C", priority: 3, parentId: draft.id }
         )
       })
     )
   }
 
   function handleAddChildren(parent: Task) {
-    setBoard(
+    setTaskList(
       produce((draft) => {
-        draft.taskLists[0].elements.map(task => {
-          if (task.uuid == parent.uuid) {
-            task.children.push(
-              { uuid: crypto.randomUUID(), title: "child", label: "C", priority: 3, children: [] }
-            )
-          }
-        })
+        draft.tasks.push(
+          { id: crypto.randomUUID(), title: "child", label: "C", priority: 3, parentId: parent.id }
+        )
       })
     )
   }
 
   function handleRemoveTask(task: Task) {
-    setBoard(
+    setTaskList(
       produce((draft) => {
-        draft.taskLists[0].elements = draft.taskLists[0].elements.filter(t => t.uuid != task.uuid)
+        draft.tasks = draft.tasks.filter(t => t.id != task.id)
       })
     )
   }
 
   function handleEditTask(task: Task) {
-    const newElements = board.taskLists[0].elements.map(t => {
-      if (t.uuid == task.uuid) {
+    const newElements = tasklist.tasks.map(t => {
+      if (t.id == task.id) {
         return task
-      }
-      if (t.children.length > 0) {
-
       }
       return t
     })
-    setBoard(
+    setTaskList(
       produce(draft => {
-        draft.taskLists[0].elements = newElements
+        draft.tasks = newElements
       })
     )
   }
@@ -72,27 +64,17 @@ function App() {
   return (
     <>
       <h1>
-        {board.title}
+        {"テストテステス"}<button onClick={handleAddTask}>+</button>
       </h1>
-      {board.taskLists.map(taskList => (
-        <section key={taskList.uuid}>
-          <h2>
-            {taskList.title}<button onClick={handleAddTask}>+</button>
-          </h2>
-          <ul>
-            {taskList.elements.map((task, index) => (
-              <TaskCard
-                onTaskChange={handleEditTask}
-                onRemoveTask={handleRemoveTask}
-                onAddChildren={handleAddChildren}
-                isLastTask={index == taskList.elements.length - 1}
-                task={task}
-              />
+      <ChangeTaskContext.Provider value={handleEditTask}>
+        <RemoveTaskContext.Provider value={handleRemoveTask}>
+          <AddChildrenContext.Provider value={handleAddChildren}>
+            {buildTaskTree(tasklist).map(taskTree => (
+              <TaskTree taskTree={taskTree} key={taskTree.task.id} />
             ))}
-          </ul>
-        </section >
-      ))
-      }
+          </AddChildrenContext.Provider>
+        </RemoveTaskContext.Provider>
+      </ChangeTaskContext.Provider>
     </>
   )
 }
