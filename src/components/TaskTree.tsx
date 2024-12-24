@@ -1,4 +1,3 @@
-import React, { Children } from 'react'
 import { useContext } from 'react';
 import { AddChildrenContext, RemoveTaskContext, ChangeTaskContext } from '../contexts/TaskCardContext';
 import { TaskTree as TT } from '../model/viewModel/taskTree';

@@ -1,19 +1,13 @@
 export type Task = {
-    uuid: string
+    id: string
     title: string
     priority: number
     label: string
-    children: Task[]
+    parentId: string | null
 }
 
 export type TaskList = {
-    uuid: string
+    id: string
     title: string
-    elements: Task[]
-}
-
-export type Board = {
-    uuid: string
-    title: string
-    taskLists: TaskList[]
+    tasks: Task[]
 }

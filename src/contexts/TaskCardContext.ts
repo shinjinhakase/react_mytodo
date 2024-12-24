@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { Task } from '../model/simpleTask'
+import { Task } from '../model/task'
 
 export const ChangeTaskContext = createContext<(task: Task) => void>(() => { })
 export const RemoveTaskContext = createContext<(task: Task) => void>(() => { })

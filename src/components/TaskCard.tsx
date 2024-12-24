@@ -1,6 +1,5 @@
 import React from 'react'
-import { TaskTree } from '../model/viewModel/taskTree';
-import { Task } from '../model/simpleTask';
+import { Task } from '../model/task';
 
 type TaskCardProps = {
     onTaskChange: (task: Task) => void,
