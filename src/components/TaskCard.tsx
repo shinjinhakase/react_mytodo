@@ -33,22 +33,10 @@ export default function TaskCard({ onTaskChange, onRemoveTask, onAddChildren, is
     }
 
     return (
-        <li key={task.uuid} id={task.uuid}>
+        <li key={task.id} id={task.id}>
             <input type="text" value={task.title} onChange={onEditTaskTitle} ref={onRender} />
             <button onClick={onRemoveTaskCard}>done</button>
             <button onClick={() => onAddChild(task)}>+</button>
-            {task.children.length > 0 &&
-                task.children.map((c, index) => (
-                    // ここが子のカード
-                    <TaskCard
-                        onTaskChange={onTaskChange}
-                        onRemoveTask={onRemoveTask}
-                        onAddChildren={onAddChildren}
-                        isLastTask={index == task.children.length - 1}
-                        task={c}
-                    />
-                ))
-            }
         </li>
     )
 }
