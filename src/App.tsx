@@ -19,7 +19,6 @@ function App() {
   }
   const [tasklist, setTaskList] = useState(defaultList)
   function handleAddTask(_: React.MouseEvent) {
-    console.log("handleAddTask")
     setTaskList(
       produce((draft) => {
         draft.tasks.push(
