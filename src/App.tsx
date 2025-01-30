@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import { TaskList, Task } from './model/task';
 import { produce } from "immer";
@@ -8,18 +8,22 @@ import { TaskTree } from './components/TaskTree';
 
 function App() {
   const first_task_id = crypto.randomUUID()
-  const defaultList: TaskList = {
-    id: crypto.randomUUID(),
-    title: "TestList",
-    tasks: [
-      { id: first_task_id, title: "task1", label: "A", priority: 1, parentId: null },
-      { id: crypto.randomUUID(), title: "task2", label: "B", priority: 2, parentId: null },
-      { id: crypto.randomUUID(), title: "task3", label: "C", priority: 3, parentId: first_task_id }
-    ]
-  }
+  // const defaultList: TaskList = {
+  //   id: crypto.randomUUID(),
+  //   title: "TestList",
+  //   tasks: [
+  //     { id: first_task_id, title: "task1", label: "A", priority: 1, parentId: null },
+  //     { id: crypto.randomUUID(), title: "task2", label: "B", priority: 2, parentId: null },
+  //     { id: crypto.randomUUID(), title: "task3", label: "C", priority: 3, parentId: first_task_id }
+  //   ]
+  // }
+  const defaultList: TaskList = JSON.parse(localStorage.getItem("taskData") || "{}")
   const [tasklist, setTaskList] = useState(defaultList)
+  useEffect(() => {
+    localStorage.setItem("taskData", JSON.stringify(tasklist))
+  }, [tasklist])
+
   function handleAddTask(_: React.MouseEvent) {
-    console.log("handleAddTask")
     setTaskList(
       produce((draft) => {
         draft.tasks.push(
