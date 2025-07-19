@@ -68,7 +68,7 @@ function App() {
   return (
     <>
       <h1>
-        {"テストテステス"}<button onClick={handleAddTask}>+</button>
+        {"タスク管理"}<button onClick={handleAddTask}>+</button>
       </h1>
       <ChangeTaskContext.Provider value={handleEditTask}>
         <RemoveTaskContext.Provider value={handleRemoveTask}>
