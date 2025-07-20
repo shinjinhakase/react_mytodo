@@ -16,8 +16,8 @@ export function buildTaskTree(taskList: TaskList) {
         }
     }
 
-    const isAncestor = (taskTree: TaskTree) => taskTree.task.parentId == null
+    const isAncestor = (task: Task) => task.parentId == null
 
-    return taskList.tasks.map(makeTaskTree).filter(isAncestor)
+    return taskList.tasks.filter(isAncestor).map(makeTaskTree)
 
 }
