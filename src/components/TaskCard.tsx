@@ -16,6 +16,14 @@ export default function TaskCard({ onTaskChange, onRemoveTask, onAddChildren, is
         onTaskChange({ ...task, title: event.currentTarget.value })
     }
 
+    function onOrderUp(_: React.MouseEvent) {
+        console.log("order up")
+    }
+
+    function onOrderDown(_: React.MouseEvent) {
+        console.log("order down")
+    }
+
     function onRemoveTaskCard(_: React.MouseEvent) {
         onRemoveTask(task)
     }
@@ -36,6 +44,8 @@ export default function TaskCard({ onTaskChange, onRemoveTask, onAddChildren, is
         <li key={task.id} id={task.id}>
             {task.order}
             <input type="text" value={task.title} onChange={onEditTaskTitle} ref={onRender} />
+            <button onClick={onOrderUp}>▲</button>
+            <button onClick={onOrderDown}>▼</button>
             <button onClick={onRemoveTaskCard}>done</button>
             <button onClick={() => onAddChild(task)}>+</button>
         </li>
