@@ -60,7 +60,12 @@ function App() {
   function handleRemoveTask(task: Task) {
     setTaskList(
       produce((draft) => {
-        draft.tasks = draft.tasks.filter(t => t.id != task.id)
+        draft.tasks = draft.tasks.filter(t => t.id != task.id).map(t => {
+          if(t.order < task.order){
+            return t
+          }
+          return {...t, order: t.order - 1}
+        })
       })
     )
   }
