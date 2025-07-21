@@ -87,7 +87,10 @@ function App() {
   function handleOrderUp(task: Task) {
     setTaskList(
       produce(draft => {
-        draft.tasks = draft.tasks.filter(t => t.parentId == task.parentId).map(t => {
+        draft.tasks = draft.tasks.map(t => {
+          if(t.parentId != task.parentId){
+            return t
+          }
           if(t.id == task.id && t.order > 0){
             return {...t, order: t.order - 1}
           }
@@ -103,9 +106,11 @@ function App() {
   function handleOrderDown(task: Task) {
     setTaskList(
       produce(draft => {
-        const bros = draft.tasks.filter(t => t.parentId == task.parentId)
-        draft.tasks = bros.map(t => {
-          if(t.id == task.id && t.order < bros.length - 1){
+        draft.tasks = draft.tasks.map(t => {
+          if(t.parentId != task.parentId){
+            return t
+          }
+          if(t.id == task.id && t.order < draft.tasks.filter(t => t.parentId == task.parentId).length - 1){
             return {...t, order: t.order + 1}
           }
           if(t.order == task.order + 1){
