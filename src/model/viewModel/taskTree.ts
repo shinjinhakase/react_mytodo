@@ -12,12 +12,12 @@ export function buildTaskTree(taskList: TaskList) {
         const isChild = (task: Task) => task.parentId == parent.id
         return {
             task: parent,
-            children: taskList.tasks.filter(isChild).map(makeTaskTree)
+            children: taskList.tasks.filter(isChild).slice().sort((a, b) => a.order - b.order).map(makeTaskTree)
         }
     }
 
     const isAncestor = (task: Task) => task.parentId == null
 
-    return taskList.tasks.filter(isAncestor).map(makeTaskTree)
+    return taskList.tasks.filter(isAncestor).slice().sort((a, b) => a.order - b.order).map(makeTaskTree)
 
 }

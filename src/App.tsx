@@ -3,21 +3,21 @@ import './App.css'
 import { TaskList, Task } from './model/task';
 import { produce } from "immer";
 import { buildTaskTree } from './model/viewModel/taskTree';
-import { AddChildrenContext, RemoveTaskContext, ChangeTaskContext } from './contexts/TaskCardContext';
+import { AddChildrenContext, OrderUpContext, OrderDownContext, RemoveTaskContext, ChangeTaskContext } from './contexts/TaskCardContext';
 import { TaskTree } from './components/TaskTree';
 
 function App() {
   const first_task_id = crypto.randomUUID()
-  // const defaultList: TaskList = {
-  //   id: crypto.randomUUID(),
-  //   title: "TestList",
-  //   tasks: [
-  //     { id: first_task_id, title: "task1", label: "A", priority: 1, parentId: null },
-  //     { id: crypto.randomUUID(), title: "task2", label: "B", priority: 2, parentId: null },
-  //     { id: crypto.randomUUID(), title: "task3", label: "C", priority: 3, parentId: first_task_id }
-  //   ]
-  // }
-  const defaultList: TaskList = JSON.parse(localStorage.getItem("taskData") || "{}")
+  const defaultList: TaskList = {
+    id: crypto.randomUUID(),
+    title: "TestList",
+    tasks: [
+      { id: first_task_id, title: "task1", order: 0, label: "A", priority: 1, parentId: null },
+      { id: crypto.randomUUID(), title: "task2", order: 1, label: "B", priority: 2, parentId: null },
+      { id: crypto.randomUUID(), title: "task3", order: 0, label: "C", priority: 3, parentId: first_task_id }
+    ]
+  }
+  // const defaultList: TaskList = JSON.parse(localStorage.getItem("taskData") || "{}")
   const [tasklist, setTaskList] = useState(defaultList)
   useEffect(() => {
     localStorage.setItem("taskData", JSON.stringify(tasklist))
@@ -27,7 +27,14 @@ function App() {
     setTaskList(
       produce((draft) => {
         draft.tasks.push(
-          { id: crypto.randomUUID(), title: "newTask", label: "C", priority: 3, parentId: null }
+          {
+            id: crypto.randomUUID(),
+            title: "newTask",
+            order: draft.tasks.filter(t => t.parentId == null).length,
+            label: "C",
+            priority: 3,
+            parentId: null,
+          }
         )
       })
     )
@@ -37,7 +44,14 @@ function App() {
     setTaskList(
       produce((draft) => {
         draft.tasks.push(
-          { id: crypto.randomUUID(), title: "child", label: "C", priority: 3, parentId: parent.id }
+          {
+            id: crypto.randomUUID(),
+            title: "child",
+            order: draft.tasks.filter(t => t.parentId == parent.id).length,
+            label: "C",
+            priority: 3,
+            parentId: parent.id,
+          }
         )
       })
     )
@@ -46,7 +60,12 @@ function App() {
   function handleRemoveTask(task: Task) {
     setTaskList(
       produce((draft) => {
-        draft.tasks = draft.tasks.filter(t => t.id != task.id)
+        draft.tasks = draft.tasks.filter(t => t.id != task.id).map(t => {
+          if(t.order < task.order){
+            return t
+          }
+          return {...t, order: t.order - 1}
+        })
       })
     )
   }
@@ -65,19 +84,61 @@ function App() {
     )
   }
 
+  function handleOrderUp(task: Task) {
+    setTaskList(
+      produce(draft => {
+        draft.tasks = draft.tasks.map(t => {
+          if(t.parentId != task.parentId){
+            return t
+          }
+          if(t.id == task.id && t.order > 0){
+            return {...t, order: t.order - 1}
+          }
+          if(t.order == task.order - 1){
+            return {...t, order: t.order + 1}
+          }
+          return t
+        })
+      })
+    )
+  }
+
+  function handleOrderDown(task: Task) {
+    setTaskList(
+      produce(draft => {
+        draft.tasks = draft.tasks.map(t => {
+          if(t.parentId != task.parentId){
+            return t
+          }
+          if(t.id == task.id && t.order < draft.tasks.filter(t => t.parentId == task.parentId).length - 1){
+            return {...t, order: t.order + 1}
+          }
+          if(t.order == task.order + 1){
+            return {...t, order: t.order - 1}
+          }
+          return t
+        })
+      })
+    )
+  }
+
   return (
     <>
       <h1>
         {"タスク管理"}<button onClick={handleAddTask}>+</button>
       </h1>
       <ChangeTaskContext.Provider value={handleEditTask}>
-        <RemoveTaskContext.Provider value={handleRemoveTask}>
-          <AddChildrenContext.Provider value={handleAddChildren}>
-            {buildTaskTree(tasklist).map(taskTree => (
-              <TaskTree taskTree={taskTree} key={taskTree.task.id} />
-            ))}
-          </AddChildrenContext.Provider>
-        </RemoveTaskContext.Provider>
+      <RemoveTaskContext.Provider value={handleRemoveTask}>
+      <AddChildrenContext.Provider value={handleAddChildren}>
+      <OrderUpContext.Provider value={handleOrderUp}>
+      <OrderDownContext.Provider value={handleOrderDown}>
+        {buildTaskTree(tasklist).map(taskTree => (
+          <TaskTree taskTree={taskTree} key={taskTree.task.id} />
+        ))}
+      </OrderDownContext.Provider>
+      </OrderUpContext.Provider>
+      </AddChildrenContext.Provider>
+      </RemoveTaskContext.Provider>
       </ChangeTaskContext.Provider>
     </>
   )
