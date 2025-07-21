@@ -3,7 +3,7 @@ import './App.css'
 import { TaskList, Task } from './model/task';
 import { produce } from "immer";
 import { buildTaskTree } from './model/viewModel/taskTree';
-import { AddChildrenContext, RemoveTaskContext, ChangeTaskContext } from './contexts/TaskCardContext';
+import { AddChildrenContext, OrderUpContext, OrderDownContext, RemoveTaskContext, ChangeTaskContext } from './contexts/TaskCardContext';
 import { TaskTree } from './components/TaskTree';
 
 function App() {
@@ -84,19 +84,31 @@ function App() {
     )
   }
 
+  function handleOrderUp(task: Task) {
+    console.log("order up")
+  }
+
+  function handleOrderDown(task: Task) {
+    console.log("order down")
+  }
+
   return (
     <>
       <h1>
         {"タスク管理"}<button onClick={handleAddTask}>+</button>
       </h1>
       <ChangeTaskContext.Provider value={handleEditTask}>
-        <RemoveTaskContext.Provider value={handleRemoveTask}>
-          <AddChildrenContext.Provider value={handleAddChildren}>
-            {buildTaskTree(tasklist).map(taskTree => (
-              <TaskTree taskTree={taskTree} key={taskTree.task.id} />
-            ))}
-          </AddChildrenContext.Provider>
-        </RemoveTaskContext.Provider>
+      <RemoveTaskContext.Provider value={handleRemoveTask}>
+      <AddChildrenContext.Provider value={handleAddChildren}>
+      <OrderUpContext.Provider value={handleOrderUp}>
+      <OrderDownContext.Provider value={handleOrderDown}>
+        {buildTaskTree(tasklist).map(taskTree => (
+          <TaskTree taskTree={taskTree} key={taskTree.task.id} />
+        ))}
+      </OrderDownContext.Provider>
+      </OrderUpContext.Provider>
+      </AddChildrenContext.Provider>
+      </RemoveTaskContext.Provider>
       </ChangeTaskContext.Provider>
     </>
   )
