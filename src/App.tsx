@@ -27,7 +27,14 @@ function App() {
     setTaskList(
       produce((draft) => {
         draft.tasks.push(
-          { id: crypto.randomUUID(), title: "newTask", label: "C", priority: 3, parentId: null }
+          {
+            id: crypto.randomUUID(),
+            title: "newTask",
+            order: draft.tasks.filter(t => t.parentId == null).length,
+            label: "C",
+            priority: 3,
+            parentId: null,
+          }
         )
       })
     )
@@ -37,7 +44,14 @@ function App() {
     setTaskList(
       produce((draft) => {
         draft.tasks.push(
-          { id: crypto.randomUUID(), title: "child", label: "C", priority: 3, parentId: parent.id }
+          {
+            id: crypto.randomUUID(),
+            title: "child",
+            order: draft.tasks.filter(t => t.parentId == parent.id).length,
+            label: "C",
+            priority: 3,
+            parentId: parent.id,
+          }
         )
       })
     )

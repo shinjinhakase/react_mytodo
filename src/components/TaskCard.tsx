@@ -34,6 +34,7 @@ export default function TaskCard({ onTaskChange, onRemoveTask, onAddChildren, is
 
     return (
         <li key={task.id} id={task.id}>
+            {task.order}
             <input type="text" value={task.title} onChange={onEditTaskTitle} ref={onRender} />
             <button onClick={onRemoveTaskCard}>done</button>
             <button onClick={() => onAddChild(task)}>+</button>
