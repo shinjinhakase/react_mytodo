@@ -14,7 +14,6 @@ type TaskCardProps = {
 export default function TaskCard({ onTaskChange, onOrderUp, onOrderDown, onRemoveTask, onAddChildren, isLastTask, task }: TaskCardProps) {
 
     function onEditTaskTitle(event: React.FormEvent<HTMLInputElement>) {
-        console.log(task.title)
         onTaskChange({ ...task, title: event.currentTarget.value })
     }
 
@@ -43,13 +42,12 @@ export default function TaskCard({ onTaskChange, onOrderUp, onOrderDown, onRemov
     }
 
     return (
-        <li key={task.id} id={task.id}>
-            {task.order}
+        <div key={task.id} id={task.id}>
             <input type="text" value={task.title} onChange={onEditTaskTitle} ref={onRender} />
             <button onClick={onOrderUpTaskCard}>▲</button>
             <button onClick={onOrderDownTaskCard}>▼</button>
             <button onClick={onRemoveTaskCard}>done</button>
             <button onClick={() => onAddChild(task)}>+</button>
-        </li>
+        </div>
     )
 }
