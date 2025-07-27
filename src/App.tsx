@@ -7,8 +7,9 @@ import { AddChildrenContext, OrderUpContext, OrderDownContext, RemoveTaskContext
 import { TaskTree } from './components/TaskTree';
 
 function App() {
+  const loadedTaskList: TaskList = JSON.parse(localStorage.getItem("taskData") || "{}")
   const first_task_id = crypto.randomUUID()
-  const defaultList: TaskList = {
+  const defaultTaskList: TaskList = {
     id: crypto.randomUUID(),
     title: "TestList",
     tasks: [
@@ -17,8 +18,8 @@ function App() {
       { id: crypto.randomUUID(), title: "task3", order: 0, label: "C", priority: 3, parentId: first_task_id }
     ]
   }
-  // const defaultList: TaskList = JSON.parse(localStorage.getItem("taskData") || "{}")
-  const [tasklist, setTaskList] = useState(defaultList)
+  const tasks = loadedTaskList.tasks.length > 0 ? loadedTaskList : defaultTaskList
+  const [tasklist, setTaskList] = useState(tasks)
   useEffect(() => {
     localStorage.setItem("taskData", JSON.stringify(tasklist))
   }, [tasklist])
