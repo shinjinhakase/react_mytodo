@@ -61,6 +61,9 @@ function App() {
     setTaskList(
       produce((draft) => {
         draft.tasks = draft.tasks.filter(t => t.id != task.id).map(t => {
+          if(t.parentId != task.parentId){
+            return t
+          }
           if(t.order < task.order){
             return t
           }
