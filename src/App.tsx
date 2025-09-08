@@ -27,11 +27,16 @@ function App() {
   function handleAddTask(_: React.MouseEvent) {
     setTaskList(
       produce((draft) => {
-        draft.tasks.push(
+        draft.tasks = draft.tasks.map(t => {
+          if(t.parentId != null){
+            return t
+          }
+          return {...t, order: t.order + 1}
+        }).concat(
           {
             id: crypto.randomUUID(),
             title: "newTask",
-            order: draft.tasks.filter(t => t.parentId == null).length,
+            order: 0,
             label: "C",
             priority: 3,
             parentId: null,
@@ -44,11 +49,16 @@ function App() {
   function handleAddChildren(parent: Task) {
     setTaskList(
       produce((draft) => {
-        draft.tasks.push(
+        draft.tasks = draft.tasks.map(t => {
+          if(t.parentId != parent.id){
+            return t
+          }
+          return {...t, order: t.order + 1}
+        }).concat(
           {
             id: crypto.randomUUID(),
             title: "child",
-            order: draft.tasks.filter(t => t.parentId == parent.id).length,
+            order: 0,
             label: "C",
             priority: 3,
             parentId: parent.id,
