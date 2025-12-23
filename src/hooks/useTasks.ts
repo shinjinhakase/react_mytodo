@@ -7,7 +7,7 @@ const createDefaultTasks = () => {
 	return [
 		{
 			uuid: firstTaskId,
-			parentId: null,
+			parentId: "root",
 			title: "task1",
 			order: 0,
 			label: "A",
@@ -15,7 +15,7 @@ const createDefaultTasks = () => {
 		},
 		{
 			uuid: crypto.randomUUID(),
-			parentId: null,
+			parentId: "root",
 			title: "task2",
 			order: 1,
 			label: "B",
@@ -58,10 +58,10 @@ const useTasks = () => {
 		);
 	}, []);
 
-	const addChildTask = useCallback((parentId: string | null) => {
+	const addChildTask = useCallback((parentId: string) => {
 		const newTask: Task = {
 			uuid: crypto.randomUUID(),
-			parentId,
+			parentId: parentId,
 			title: "newTask",
 			order: 0,
 			label: "C",
@@ -72,7 +72,7 @@ const useTasks = () => {
 	}, []);
 
 	const getChildren = useCallback(
-		(parentId: string | null) => {
+		(parentId: string) => {
 			return taskList.filter((task) => task.parentId === parentId);
 		},
 		[taskList],

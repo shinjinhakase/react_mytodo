@@ -68,7 +68,7 @@ function App() {
 				<ReactLogo width={50} height={50} />
 				<TypeScriptLogo width={50} height={50} />
 				{"タスク管理"}
-				<button type="button" onClick={(_e) => addChildTask(null)}>
+				<button type="button" onClick={(_e) => addChildTask("root")}>
 					+
 				</button>
 			</h1>
@@ -83,7 +83,7 @@ function App() {
 						items={taskList.map((task) => task.uuid)}
 						strategy={verticalListSortingStrategy}
 					>
-						{getChildren(null)?.map((task: Task) => (
+						{getChildren("root")?.map((task: Task) => (
 							<TaskCard
 								key={task.uuid}
 								task={task}
