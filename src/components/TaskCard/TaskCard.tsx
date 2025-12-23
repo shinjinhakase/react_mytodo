@@ -40,7 +40,7 @@ const TaskCard = ({
 				</button>
 			</div>
 			<div className={styles.children}>
-				{getChildren(task.uuid).map((child) => (
+				{getChildren(task.uuid)?.map((child) => (
 					<TaskCard
 						key={child.uuid}
 						task={child}
