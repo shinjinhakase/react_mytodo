@@ -1,6 +1,6 @@
 type Task = {
 	uuid: string;
-	parentId: string | null;
+	parentId: string;
 	title: string;
 	order: number;
 	priority: number;

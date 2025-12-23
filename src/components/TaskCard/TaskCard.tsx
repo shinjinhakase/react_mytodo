@@ -6,10 +6,10 @@ import { CSS } from '@dnd-kit/utilities';
 
 interface TaskCardProps {
 	task: Task;
-	getChildren: (parentId: string | null) => Task[];
+	getChildren: (parentId: string) => Task[];
 	handleEditTask: (editedTask: Task) => void;
 	handleDeleteTask: (deletedTask: Task) => void;
-	handleAddChild: (parentId: string | null) => void;
+	handleAddChild: (parentId: string) => void;
 }
 
 const TaskCard = ({
