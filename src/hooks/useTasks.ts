@@ -79,6 +79,8 @@ const useTasks = () => {
 	);
 
 	return {
+		taskList,
+		setTaskList,
 		getChildren,
 		editTask,
 		deleteTask,

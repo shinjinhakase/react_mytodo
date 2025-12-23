@@ -1,6 +1,8 @@
 import Hamburger from "../../assets/Hamburger";
 import type Task from "../../types/Task";
 import styles from "./TaskCard.module.scss";
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface TaskCardProps {
 	task: Task;
@@ -17,10 +19,25 @@ const TaskCard = ({
 	handleDeleteTask,
 	handleAddChild,
 }: TaskCardProps) => {
+	const {
+    attributes,
+    listeners,
+    setNodeRef,
+		transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.uuid });
+
+	const draggingStyle = {
+    transform: CSS.Transform.toString(transform),
+    transition: isDragging ? 'none' : transition,
+    visibility: isDragging ? ('hidden' as const) : ('visible' as const),
+  };
+
 	return (
 		<div>
-			<div className={styles.taskCard}>
-				<div className={styles.dragHandle}>
+			<div className={styles.taskCard} style={draggingStyle} ref={setNodeRef}>
+				<div className={styles.dragHandle} {...attributes} {...listeners}>
 					<Hamburger width={13} height={13} />
 				</div>
 				<input
