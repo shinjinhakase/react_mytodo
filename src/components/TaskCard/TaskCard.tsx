@@ -3,6 +3,7 @@ import type Task from "../../types/Task";
 import styles from "./TaskCard.module.scss";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useEffect, useRef } from "react";
 
 interface TaskCardProps {
 	task: Task;
@@ -34,6 +35,15 @@ const TaskCard = ({
     visibility: isDragging ? ('hidden' as const) : ('visible' as const),
   };
 
+	const inputRef = useRef<HTMLInputElement>(null);
+	const spanRef = useRef<HTMLSpanElement>(null);
+
+	useEffect(() => {
+    if (spanRef.current && inputRef.current) {
+      inputRef.current.style.width = spanRef.current.offsetWidth + "px";
+    }
+  }, [task.title]);
+
 	return (
 		<div>
 			<div className={styles.taskCard} style={draggingStyle} ref={setNodeRef}>
@@ -41,6 +51,7 @@ const TaskCard = ({
 					<Hamburger width={13} height={13} />
 				</div>
 				<input
+					ref={inputRef}
 					value={task.title}
 					onChange={(e) =>
 						handleEditTask({
@@ -49,6 +60,18 @@ const TaskCard = ({
 						})
 					}
 				/>
+				<span
+					ref={spanRef}
+					style={{
+						position: "absolute",
+						visibility: "hidden",
+						whiteSpace: "pre",
+						fontSize: "16px",
+						padding: "4px 8px",
+					}}
+				>
+					{task.title || " "}
+				</span>
 				<button type="button" onClick={(_e) => handleDeleteTask(task)}>
 					done
 				</button>
