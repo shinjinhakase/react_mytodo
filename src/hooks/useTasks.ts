@@ -71,6 +71,19 @@ const useTasks = () => {
 		setTaskList((prev) => prev.concat(newTask));
 	}, []);
 
+	const addTaskToStart = useCallback((parentId: string) => {
+		const newTask: Task = {
+			uuid: crypto.randomUUID(),
+			parentId,
+			title: "newTask",
+			order: 0,
+			label: "C",
+			priority: 3,
+		};
+
+		setTaskList((prev) => [newTask, ...prev]);
+	}, []);
+
 	const getChildren = useCallback(
 		(parentId: string) => {
 			return taskList.filter((task) => task.parentId === parentId);
@@ -85,6 +98,7 @@ const useTasks = () => {
 		editTask,
 		deleteTask,
 		addChildTask,
+		addTaskToStart,
 	};
 };
 
