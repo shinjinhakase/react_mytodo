@@ -55,7 +55,7 @@ describe("TaskCard", () => {
 		expect(handleDoneTask).toHaveBeenCalledWith(mockTask.uuid);
 	});
 
-	test("未完了の子がいるとdoneボタンは無効になる", () => {
+	test("未完了の子がいると未完了タスクのdoneボタンは無効になる", () => {
 		getChildren.mockImplementation((parentId: string) =>
 			parentId === mockTask.uuid
 				? [{ ...mockTask, uuid: "child", parentId: mockTask.uuid }]
@@ -73,6 +73,21 @@ describe("TaskCard", () => {
 		);
 
 		expect(screen.getAllByRole("button", { name: "done" })[1]).toBeDisabled();
+	});
+
+	test("完了済みタスクのdoneボタンは未完了に戻すため有効になる", () => {
+		render(
+			<TaskCard
+				task={{ ...mockTask, isDone: true }}
+				getChildren={getChildren}
+				handleEditTask={handleEditTask}
+				handleDoneTask={handleDoneTask}
+				handleDeleteTask={handleDeleteTask}
+				handleAddChild={handleAddChild}
+			/>,
+		);
+
+		expect(screen.getAllByRole("button", { name: "done" })[1]).not.toBeDisabled();
 	});
 
 	test("未完了タスクの削除ボタンは無効になる", () => {

@@ -50,6 +50,21 @@ describe("useTasks", () => {
 		expect(result.current.getChildren("root")?.[0].isDone).toBe(true);
 	});
 
+	test("doneTask は完了済みタスクを未完了に戻せる", () => {
+		const { result } = renderHook(() => useTasks());
+		const taskId = result.current.getChildren("root")?.[1].uuid;
+
+		act(() => {
+			result.current.doneTask(taskId);
+		});
+		expect(result.current.getChildren("root")?.[1].isDone).toBe(true);
+
+		act(() => {
+			result.current.doneTask(taskId);
+		});
+		expect(result.current.getChildren("root")?.[1].isDone).toBe(false);
+	});
+
 	test("deleteTask", () => {
 		const { result } = renderHook(() => useTasks());
 		const firstTaskId = result.current.getChildren("root")?.[0].uuid;

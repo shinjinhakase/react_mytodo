@@ -78,7 +78,7 @@ const TaskCard = ({
 					<button
 						type="button"
 						onClick={(_e) => handleDoneTask(task.uuid)}
-						disabled={task.isDone || hasIncompleteChildren}
+						disabled={!task.isDone && hasIncompleteChildren}
 					>
 						done
 					</button>

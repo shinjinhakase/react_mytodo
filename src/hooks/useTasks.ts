@@ -57,15 +57,23 @@ const useTasks = () => {
 
 	const doneTask = useCallback((doneTaskId: string) => {
 		setTaskList((prev) => {
-			const childTasks = prev.filter((task) => task.parentId === doneTaskId);
-			const canComplete = childTasks.every((task) => task.isDone);
+			const targetTask = prev.find((task) => task.uuid === doneTaskId);
 
-			if (!canComplete) {
+			if (!targetTask) {
 				return prev;
 			}
 
+			if (!targetTask.isDone) {
+				const childTasks = prev.filter((task) => task.parentId === doneTaskId);
+				const canComplete = childTasks.every((task) => task.isDone);
+
+				if (!canComplete) {
+					return prev;
+				}
+			}
+
 			return prev.map((task) =>
-				task.uuid === doneTaskId ? { ...task, isDone: true } : task,
+				task.uuid === doneTaskId ? { ...task, isDone: !task.isDone } : task,
 			);
 		});
 	}, []);
