@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import TaskCard from "./TaskCard";
+import styles from "./TaskCard.module.scss";
 
 const getChildren = vi.fn();
 const handleEditTask = vi.fn();
@@ -72,6 +73,32 @@ describe("TaskCard", () => {
 		);
 
 		expect(screen.getAllByRole("button", { name: "done" })[1]).toBeDisabled();
+	});
+
+	test("未完了タスクの削除ボタンは無効になる", () => {
+		expect(screen.getByRole("button", { name: "x" })).toBeDisabled();
+	});
+
+	test("完了済みタスクの削除ボタンは有効で背景が緑になる", async () => {
+		render(
+			<TaskCard
+				task={{ ...mockTask, isDone: true }}
+				getChildren={getChildren}
+				handleEditTask={handleEditTask}
+				handleDoneTask={handleDoneTask}
+				handleDeleteTask={handleDeleteTask}
+				handleAddChild={handleAddChild}
+			/>,
+		);
+
+		const deleteButton = screen.getAllByRole("button", { name: "x" })[1];
+		expect(deleteButton).not.toBeDisabled();
+
+		await userEvent.click(deleteButton);
+		expect(handleDeleteTask).toHaveBeenCalledWith({ ...mockTask, isDone: true });
+
+		const textbox = screen.getAllByRole("textbox")[1];
+		expect(textbox.closest(`.${styles.taskCard}`)).toHaveClass(styles.done);
 	});
 
 	test("+ボタンを押すと子タスクが追加される", async () => {

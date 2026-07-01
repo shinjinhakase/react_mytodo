@@ -82,7 +82,11 @@ const TaskCard = ({
 					>
 						done
 					</button>
-					<button type="button" onClick={(_e) => handleDeleteTask(task)}>
+					<button
+						type="button"
+						onClick={(_e) => handleDeleteTask(task)}
+						disabled={!task.isDone}
+					>
 						x
 					</button>
 				</div>
