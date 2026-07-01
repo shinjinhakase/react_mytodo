@@ -5,12 +5,14 @@ import TaskCard from "./TaskCard";
 
 const getChildren = vi.fn();
 const handleEditTask = vi.fn();
+const handleDoneTask = vi.fn();
 const handleDeleteTask = vi.fn();
 const handleAddChild = vi.fn();
 const mockTask = {
 	uuid: "uuid",
 	title: "モックタスク",
 	parentId: "parentId",
+	isDone: false,
 	order: 0,
 	priority: 0,
 	label: "label",
@@ -18,11 +20,14 @@ const mockTask = {
 
 describe("TaskCard", () => {
 	beforeEach(() => {
+		vi.clearAllMocks();
+		getChildren.mockImplementation(() => []);
 		render(
 			<TaskCard
 				task={mockTask}
 				getChildren={getChildren}
 				handleEditTask={handleEditTask}
+				handleDoneTask={handleDoneTask}
 				handleDeleteTask={handleDeleteTask}
 				handleAddChild={handleAddChild}
 			/>,
@@ -43,10 +48,30 @@ describe("TaskCard", () => {
 		});
 	});
 
-	test("doneボタンを押すと削除される", async () => {
+	test("doneボタンを押すと完了処理が呼ばれる", async () => {
 		const button = screen.getByRole("button", { name: "done" });
 		await userEvent.click(button);
-		expect(handleDeleteTask).toHaveBeenCalledWith(mockTask);
+		expect(handleDoneTask).toHaveBeenCalledWith(mockTask.uuid);
+	});
+
+	test("未完了の子がいるとdoneボタンは無効になる", () => {
+		getChildren.mockImplementation((parentId: string) =>
+			parentId === mockTask.uuid
+				? [{ ...mockTask, uuid: "child", parentId: mockTask.uuid }]
+				: [],
+		);
+		render(
+			<TaskCard
+				task={mockTask}
+				getChildren={getChildren}
+				handleEditTask={handleEditTask}
+				handleDoneTask={handleDoneTask}
+				handleDeleteTask={handleDeleteTask}
+				handleAddChild={handleAddChild}
+			/>,
+		);
+
+		expect(screen.getAllByRole("button", { name: "done" })[1]).toBeDisabled();
 	});
 
 	test("+ボタンを押すと子タスクが追加される", async () => {

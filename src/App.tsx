@@ -5,30 +5,33 @@ import TaskCard from "./components/TaskCard/TaskCard";
 import useTasks from "./hooks/useTasks";
 import type Task from "./types/Task";
 import {
-  SortableContext,
-  verticalListSortingStrategy,
+	SortableContext,
+	verticalListSortingStrategy,
 	sortableKeyboardCoordinates,
 	arrayMove,
-} from '@dnd-kit/sortable';
+} from "@dnd-kit/sortable";
 import {
-  closestCenter,
-  DndContext,
-  type DragEndEvent,
-  DragOverlay,
-  type DragStartEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+	closestCenter,
+	DndContext,
+	type DragEndEvent,
+	DragOverlay,
+	type DragStartEvent,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
 import { useState, useRef } from "react";
 
 const OverlayTask = (task: Task) => {
-  return(
-    <div>
-      <input value={task.title}/><button disabled>done</button>
-    </div>
-  );
+	return (
+		<div>
+			<input value={task.title} readOnly />
+			<button disabled type="button">
+				done
+			</button>
+		</div>
+	);
 };
 
 function App() {
@@ -37,38 +40,39 @@ function App() {
 		setTaskList,
 		getChildren,
 		editTask,
+		doneTask,
 		deleteTask,
 		addChildTask,
 		addTaskToStart,
 	} = useTasks();
 	const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		}),
+	);
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  };
+	const handleDragStart = (event: DragStartEvent) => {
+		setActiveId(event.active.id as string);
+	};
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+	const handleDragEnd = (event: DragEndEvent) => {
+		const { active, over } = event;
 
-    if (over && active.id !== over.id) {
-      const oldIndex = taskList.findIndex((item) => item.uuid === active.id);
-      const newIndex = taskList.findIndex((item) => item.uuid === over.id);
-      const newTaskList = arrayMove(taskList, oldIndex, newIndex);
-      setTaskList(newTaskList);
-    };
-    setActiveId(null);
-  };
+		if (over && active.id !== over.id) {
+			const oldIndex = taskList.findIndex((item) => item.uuid === active.id);
+			const newIndex = taskList.findIndex((item) => item.uuid === over.id);
+			const newTaskList = arrayMove(taskList, oldIndex, newIndex);
+			setTaskList(newTaskList);
+		}
+		setActiveId(null);
+	};
 
-  const activeItem = activeId
-    ? taskList.find((task) => task.uuid === activeId)
-    : null;
+	const activeItem = activeId
+		? taskList.find((task) => task.uuid === activeId)
+		: null;
 
 	return (
 		<>
@@ -85,7 +89,7 @@ function App() {
 					sensors={sensors}
 					collisionDetection={closestCenter}
 					onDragStart={handleDragStart}
-					onDragEnd={handleDragEnd}  
+					onDragEnd={handleDragEnd}
 				>
 					<SortableContext
 						items={taskList.map((task) => task.uuid)}
@@ -97,16 +101,13 @@ function App() {
 								task={task}
 								getChildren={getChildren}
 								handleEditTask={editTask}
+								handleDoneTask={doneTask}
 								handleDeleteTask={deleteTask}
 								handleAddChild={addChildTask}
 							/>
 						))}
 					</SortableContext>
-					<DragOverlay>
-						{activeItem ? (
-							<OverlayTask {...activeItem} />
-						) : null }
-					</DragOverlay>
+					<DragOverlay>{activeItem ? <OverlayTask {...activeItem} /> : null}</DragOverlay>
 				</DndContext>
 			</div>
 		</>

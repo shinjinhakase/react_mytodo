@@ -8,6 +8,7 @@ const createDefaultTasks = () => {
 		{
 			uuid: firstTaskId,
 			parentId: "root",
+			isDone: false,
 			title: "task1",
 			order: 0,
 			label: "A",
@@ -16,6 +17,7 @@ const createDefaultTasks = () => {
 		{
 			uuid: crypto.randomUUID(),
 			parentId: "root",
+			isDone: false,
 			title: "task2",
 			order: 1,
 			label: "B",
@@ -25,6 +27,7 @@ const createDefaultTasks = () => {
 			uuid: crypto.randomUUID(),
 			parentId: firstTaskId,
 			title: "task3",
+			isDone: false,
 			order: 0,
 			label: "C",
 			priority: 3,
@@ -52,6 +55,21 @@ const useTasks = () => {
 		);
 	}, []);
 
+	const doneTask = useCallback((doneTaskId: string) => {
+		setTaskList((prev) => {
+			const childTasks = prev.filter((task) => task.parentId === doneTaskId);
+			const canComplete = childTasks.every((task) => task.isDone);
+
+			if (!canComplete) {
+				return prev;
+			}
+
+			return prev.map((task) =>
+				task.uuid === doneTaskId ? { ...task, isDone: true } : task,
+			);
+		});
+	}, []);
+
 	const deleteTask = useCallback((deletedTask: Task) => {
 		setTaskList((prev) =>
 			prev.filter((task) => task.uuid !== deletedTask.uuid),
@@ -62,6 +80,7 @@ const useTasks = () => {
 		const newTask: Task = {
 			uuid: crypto.randomUUID(),
 			parentId: parentId,
+			isDone: false,
 			title: "newTask",
 			order: 0,
 			label: "C",
@@ -75,6 +94,7 @@ const useTasks = () => {
 		const newTask: Task = {
 			uuid: crypto.randomUUID(),
 			parentId,
+			isDone: false,
 			title: "newTask",
 			order: 0,
 			label: "C",
@@ -96,6 +116,7 @@ const useTasks = () => {
 		setTaskList,
 		getChildren,
 		editTask,
+		doneTask,
 		deleteTask,
 		addChildTask,
 		addTaskToStart,

@@ -3,6 +3,11 @@
   align-items: center;
 }
 
+.done input {
+  color: #777;
+  text-decoration: line-through;
+}
+
 .dragHandle {
   padding: 4px;
 }
