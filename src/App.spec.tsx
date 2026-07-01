@@ -26,5 +26,6 @@ describe("App", () => {
     await userEvent.click(button);
     const taskList = screen.getAllByRole("textbox");
     expect(taskList.length).toBe(4);
+    expect((taskList[0] as HTMLInputElement).value).toBe("newTask");
   });
 });

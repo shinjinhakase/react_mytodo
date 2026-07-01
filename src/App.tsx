@@ -32,7 +32,15 @@ const OverlayTask = (task: Task) => {
 };
 
 function App() {
-	const { taskList, setTaskList, getChildren, editTask, deleteTask, addChildTask } = useTasks();
+	const {
+		taskList,
+		setTaskList,
+		getChildren,
+		editTask,
+		deleteTask,
+		addChildTask,
+		addTaskToStart,
+	} = useTasks();
 	const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -68,7 +76,7 @@ function App() {
 				<ReactLogo width={50} height={50} />
 				<TypeScriptLogo width={50} height={50} />
 				{"タスク管理"}
-				<button type="button" onClick={(_e) => addChildTask("root")}>
+				<button type="button" onClick={(_e) => addTaskToStart("root")}>
 					+
 				</button>
 			</h1>

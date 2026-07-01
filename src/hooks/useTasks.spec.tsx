@@ -56,5 +56,19 @@ describe("useTasks", () => {
       result.current.addChildTask(firstTaskId);
     });
     expect(result.current.getChildren(firstTaskId)?.length).toBe(3);
-  })
+  });
+
+  test("addTaskToStart", () => {
+    const { result } = renderHook(() => useTasks());
+
+    act(() => {
+      result.current.addTaskToStart("root");
+    });
+
+    expect(result.current.getChildren("root")?.map((task) => task.title)).toStrictEqual([
+      "newTask",
+      "task1",
+      "task2",
+    ]);
+  });
 });
